@@ -8,16 +8,13 @@ class Point {
 class quadTree {
   constructor(x, y, w, h) {
     //dimensional and positional detail
+
     this.x = x;
     this.y = y;
     this.width = w;
     this.height = h;
+    this.splitted = false;
 
-    //child of the node
-    this.northEast = null;
-    this.northWest = null;
-    this.southWest = null;
-    this.southEast = null;
     this.points = [];
     this.capacity = 5;
   }
@@ -31,25 +28,55 @@ class quadTree {
     );
   }
 
-  subdivide() {
-    console.log("i am subdivided");
+  split(point) {
+    if (this.splitted === false) {
+      this.splitted = true;
+      let widthhalf = this.width / 2;
+      let heighthalf = this.height / 2;
+
+      this.northWest = new quadTree(this.x, this.y, widthhalf, heighthalf);
+
+      this.northEast = new quadTree(
+        this.x + widthhalf,
+        this.y,
+        widthhalf,
+        heighthalf
+      );
+      this.southWest = new quadTree(
+        this.x,
+        this.y + heighthalf,
+        widthhalf,
+        heighthalf
+      );
+      this.southEast = new quadTree(
+        this.x + widthhalf,
+        this.y + heighthalf,
+        widthhalf,
+        heighthalf
+      );
+    }
+    this.northWest.insert(point);
+    this.northEast.insert(point);
+    this.southWest.insert(point);
+    this.southEast.insert(point);
   }
 
   insert(point) {
-    // ------------------check if it can contain this point -----------------------------------
+    if (!this.boundaryCheck(point)) {
+      return;
+    }
     if (this.points.length < this.capacity) {
       this.points.push(point);
     } else {
-      this.subdivide();
+      this.split(point);
     }
   }
 }
 
 let quadTree1 = new quadTree(0, 0, 20, 20);
 for (let i = 0; i < 8; i++) {
-  let point = new Point(10, 10);
-  if (quadTree1.boundaryCheck(point)) {
-    quadTree1.insert(point);
-  }
+  let point = new Point(2, 2);
+  quadTree1.insert(point);
 }
+
 console.log(quadTree1);

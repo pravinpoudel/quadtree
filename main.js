@@ -20,6 +20,16 @@ class quadTree {
   }
 
   boundaryCheck(point) {
+    console.log(
+      (point.x >= this.x) +
+        " and " +
+        (point.x <= this.x + this.width) +
+        " and " +
+        (point.y >= this.y) +
+        " and " +
+        (point.y <= this.y + this.height)
+    );
+
     return (
       point.x >= this.x &&
       point.x <= this.x + this.width &&
@@ -62,6 +72,7 @@ class quadTree {
   }
 
   insert(point) {
+    console.log(this.boundaryCheck(point));
     if (!this.boundaryCheck(point)) {
       return;
     }
@@ -73,10 +84,39 @@ class quadTree {
   }
 }
 
-let quadTree1 = new quadTree(0, 0, 20, 20);
-for (let i = 0; i < 8; i++) {
+let canvas = document.getElementById("canvas");
+let context = canvas.getContext("2d");
+
+canvas.addEventListener("click", (event) => addPoint(event));
+
+let quadTree1 = new quadTree(0, 0, 500, 400);
+for (let i = 0; i < 11; i++) {
   let point = new Point(2, 2);
   quadTree1.insert(point);
 }
+
+function addPoint(event) {
+  let element = event.target.getBoundingClientRect();
+  let xPosition = event.clientX - element.left;
+  let yPosition = event.clientY - element.top;
+  let point = new Point(xPosition, yPosition);
+  console.log(xPosition, yPosition);
+  quadTree1.insert(point);
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  console.log(quadTree1);
+  draw(quadTree1);
+}
+
+function draw(obj) {
+  context.strokeRect(obj.x, obj.y, obj.width, obj.height);
+  if (obj.northEast) {
+    draw(obj.northEast);
+    draw(obj.northWest);
+    draw(obj.southEast);
+    draw(obj.southWest);
+  }
+}
+
+draw(quadTree1);
 
 console.log(quadTree1);

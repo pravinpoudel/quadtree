@@ -87,6 +87,8 @@ for (let i = 0; i < 11; i++) {
 }
 
 function addPoint(event) {
+  event.stopPropagation();
+  event.preventDefault();
   let element = event.target.getBoundingClientRect();
   let xPosition = event.clientX - element.left;
   let yPosition = event.clientY - element.top;
@@ -97,6 +99,7 @@ function addPoint(event) {
 }
 
 function draw(obj) {
+  // context.strokeStyle = "#0063B2FF";
   context.strokeRect(obj.x, obj.y, obj.width, obj.height);
   if (obj.northEast) {
     draw(obj.northEast);
